@@ -418,7 +418,7 @@ def do_login(username: str):
 
 
 def login_screen():
-    _, mid, _ = st.columns([1, 1.6, 1])
+    _, mid, _ = st.columns([1, 2, 1])
     with mid:
         hero("🏥 Quarantine Centre Tracker", "Temperatures · Rounds · Discharges · Outcomes")
         with st.form("login"):
@@ -434,12 +434,18 @@ def login_screen():
                 st.error("Invalid username or password.")
         demo_roles = [r for r in ROLES if configured_password(r) == DEFAULT_PASSWORDS[r]]
         if demo_roles:
-            st.caption("Demo mode – default passwords are active. Quick sign-in:")
-            cols = st.columns(len(demo_roles))
-            for c, r in zip(cols, demo_roles):
-                label, emoji, _ = ROLE_INFO[r]
+            # login-page-only styling: big, full-width, easy-to-read buttons
+            st.markdown("""<style>
+            div[data-testid="stButton"] button {min-height: 3.4rem; font-size: 1.15rem; font-weight: 600;
+                border-radius: 12px; justify-content: flex-start; padding-left: 1.2rem;}
+            div[data-testid="stButton"] button p {font-size: 1.15rem;}
+            </style>""", unsafe_allow_html=True)
+            st.markdown("#### 🚀 Quick sign-in (demo mode)")
+            st.caption("Default passwords are active – tap a role to try the app.")
+            for r in demo_roles:
+                label, emoji, desc = ROLE_INFO[r]
                 first = next(u for u, _, rr in DEFAULT_USERS if rr == r)
-                if c.button(f"{emoji} {label}", key=f"q{r}", use_container_width=True):
+                if st.button(f"{emoji}  {label}  –  {desc}", key=f"q{r}", use_container_width=True):
                     do_login(first)
 
 
